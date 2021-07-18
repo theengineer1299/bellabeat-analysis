@@ -1,0 +1,162 @@
+---
+title: "Bellabeat"
+output: html_document
+---
+
+# INTRODUCTION
+
+This is case study which is part of the capstone project of "Google Data Analytics Proffesional Certificate". The case study covers analyzing trends from Bellabeat's data and making recommendation to influence marketing strategy. In this process, I will be acting as junior data analyst on marketing team at Bellabeat.
+
+## A Little Background on BELLABEAT
+
+Bellabeat is a high-tech manufacturer of health-focused products for women. Bellabeat is a successful small company, but they have the potential to become a larger player in the global smart device market. Urška Sršen, cofounder and Chief Creative Officer of Bellabeat, believes that analyzing smart device fitness data could help unlock new growth opportunities for the company.
+
+By 2016, Bellabeat had opened offices around the world and launched multiple products. Bellabeat products became available through a growing number of online retailers in addition to their own e-commerce channel on their website. The company has invested in traditional advertising media, such as radio, out-of-home billboards, print, and television, but focuses on digital marketing extensively.
+
+Stakeholder :
+
+Urška Sršen: Bellabeat’s cofounder and Chief Creative Officer
+Sando Mur: Mathematician and Bellabeat’s cofounder
+Bellabeat marketing analytics team: A team of data analysts responsible for collecting, analyzing, and reporting data
+BellaBeat Product Includes :
+
+Bellabeat app: The Bellabeat app provides users with health data related to their activity, sleep, stress,menstrual cycle, and mindfulness habits.
+Leaf: Bellabeat’s classic wellness tracker can be worn as a bracelet, necklace, or clip.
+Time: This wellness watch combines the timeless look of a classic timepiece with smart technology to track user activity, sleep, and stress.
+Spring: This is a water bottle that tracks daily water intake using smart technology to ensure that you are appropriately hydrated throughout the day.
+Bellabeat membership: Bellabeat also offers a subscription-based membership program for users that gives users 24/7 access to fully personalized guidance.
+
+
+## What we aim to do?!
+
+We will analyze smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices together with answering Bellabeat's business task which includes :
+
+*What are some trends in smart device usage?
+*How could these trends apply to Bellabeat customers?
+*How could these trends help influence Bellabeat marketing strategy?
+
+
+## The Dataset
+
+The data we will be using for this analysis is [Fitbit Fitness Tracker Data](https://www.kaggle.com/arashnic/fitbit) dataset that contains personal fitness tracker data from thirty eligible fitbit users. Including information such as daily activity, steps, calories and sleep habits. Data is stored in personal devices and used for trend analysis purpose only. Data is organized in wide format.
+
+## The Process
+
+### Loading the Packages
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+### Importing the Datasets
+
+```{r}
+daily_activity <- read.csv("dailyActivity_merged.csv")
+
+sleep_day <- read.csv("sleepDay_merged.csv")
+```
+
+### Exploring the Datasets
+
+```{r}
+head(daily_activity)
+
+colnames(daily_activity)
+
+head(sleep_day)
+
+colnames(sleep_day)
+```
+
+### Statistics of the Data
+
+```{r}
+n_distinct(daily_activity$Id)
+
+n_distinct(sleep_day$Id)
+
+daily_activity %>% 
+  select(TotalSteps, TotalDistance, SedentaryMinutes) %>% 
+  summary()
+
+sleep_day %>% 
+  select(TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed) %>% 
+  summary()
+
+```
+
+**Summary**
+
+*33 Unique ID in Activity
+*24 Unique ID in Sleep
+
+
+### Plotting the relationship within the Datasets
+
+```{r}
+ggplot(data = daily_activity) + geom_point(mapping = aes(x=TotalSteps, y=SedentaryMinutes))
+
+
+ggplot(data = sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) + geom_point()
+
+```
+
+**Take Away**
+
+* Positive correlation between Total Steps and Sedentary Minutes
+* Positive correaltion between Total Minutes Asleep and Total Time In Bed
+
+
+### Merging the Two Datasets Together and Plotting Them
+
+```{r}
+combined_data <- merge(sleep_day, daily_activity, by="Id")
+```
+
+```{r}
+ ggplot(combined_data, mapping = aes(x = TotalSteps, y = Calories))+
+     geom_point(color = "red")+
+     geom_smooth(color = "purple")+
+     labs(title = "Total Steps vs Calories")
+```
+
+**Take Away**
+Here we are able to observe that there is positive relationship between Total Steps and Calories, thereby indicating that users who took more steps each day burnt more calories.
+
+
+```{r}
+ggplot(combined_data, mapping = aes(x = Calories, y = VeryActiveMinutes))+
+     geom_point(color = "red")+
+     geom_smooth(color = "purple")+
+     labs(title = "Calories vs Very Active Minutes")
+```
+
+**Take Away**
+
+Positive relationship between Calories and Very Active Minutes, indicating that users who have more active minutes also burnt more calories.
+
+
+### Statistics on the Merged Data
+
+```{r}
+n_distinct(combined_data$Id)
+```
+
+### Answering the Questions!
+
+1. What are some trends in smart device usage?
+
+* Total steps and Calories are in positively related.
+* Calories and Active minutes are in positive relationship.
+
+2. How could these trends apply to Bellabeat customers?
+
+* The trends could provide customers with valuable data to improve their daily habits and promote a healthier lifestyle.
+
+3. How could these trends help influence Bellabeat marketing strategy?
+
+* The trends could help the Bellabeat marketing team to make more educated decisions and also keep an eye on their customers habits to help them with future advertising campaigns.
+
+
+### Thank You!
